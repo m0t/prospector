@@ -20,5 +20,5 @@ def bing_search(query, search_type):
     response_data = response.read()
     json_result = json.loads(response_data)
     result_list = json_result['d']['results']
-    print result_list
+    #print result_list
     return result_list

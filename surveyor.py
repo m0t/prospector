@@ -8,6 +8,7 @@ import sys
 
 def do_query(word, filetype, key):
 
+'''
     query = FileTypeQuery(key, word, filetype.upper())
 
     try:
@@ -18,6 +19,8 @@ def do_query(word, filetype, key):
                 pass
     except:
         pass
+'''
+
 
 def parse_args(args):
     parser = optparse.OptionParser("%prog [-k] [-t] 'SEARCH TERMS'")

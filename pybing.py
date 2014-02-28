@@ -2,14 +2,10 @@ import urllib
 import urllib2
 import json
  
-def main():
-    query = "ext:pdf"
-    print bing_search(query, 'Web')
-    print bing_search(query, 'Image')
  
 def bing_search(query, search_type):
     #search_type: Web, Image, News, Video
-    key= 'jZxGOCXEIaEMlHSIPajNKtLz93ryYqE0w7J+GjL2GT4'
+    key= ''
     query = urllib.quote(query)
     # create credential for authentication
     user_agent = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; FDM; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 1.1.4322)'

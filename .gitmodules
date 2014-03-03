@@ -1,0 +1,3 @@
+[submodule "pybing"]
+	path = pybing
+	url = git@githubcom:m0t/pybing.git

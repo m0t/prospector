@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-from pybing.query import FileTypeQuery
+from pybing.query import WebQuery
+from urlparse import urlparse,parse_qs
 import fileinput
 import optparse
 import sys
 
 keyfile='key.txt'
 
-def do_query(word, filetype, key):
+def do_query(word, key):
 
   '''
       try:
@@ -19,9 +20,10 @@ def do_query(word, filetype, key):
       except:
           pass
   '''
-  query = FileTypeQuery(key, word, filetype.upper())
+  #query = WebQuery(key, word, filetype.upper())
+  query = WebQuery(key, word)
   for r in query.execute():
-    yield r.url.decode('utf-8').encode('utf-8')
+    yield parse_qs(urlparse(r.url.decode('utf-8').encode('utf-8')).query)["r"][0]
 
 def read_key(keyfile):
 
@@ -31,10 +33,8 @@ def read_key(keyfile):
 
 def parse_args(args):
     parser = optparse.OptionParser("%prog [-k] [-t] 'SEARCH TERMS'")
-    parser.add_option("-k", "--key", help="Bing API key",
-                      default=None)
-    parser.add_option("-t", "--filetype", help="File type e.g. [DOC, PDF,...]",
-                     default="DOC")
+    parser.add_option("-k", "--key", help="Bing API key", default=None)
+    #parser.add_option("-t", "--filetype", help="File type e.g. [DOC, PDF,...]", default="DOC")
     parser.add_option("-Q", "--query", help="query words", default=None)
 
     opts, args = parser.parse_args(args)
@@ -57,7 +57,8 @@ def main(args):
       key = opts.key
 
     for query in queries:
-        for url in do_query(query, opts.filetype, key):
+        #for url in do_query(query, opts.filetype, key):
+        for url in do_query(query, key):
             print url
 
     return 0

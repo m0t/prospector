@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 import gevent
 import gevent.backdoor
-import gevent.coros
+import gevent.lock
 import gevent.monkey
 import gevent.pool
 import gevent.queue
@@ -65,7 +65,7 @@ def get_resp_len(resp):
     return l
 
 
-class Tokens(gevent.coros.Semaphore):
+class Tokens(gevent.lock.Semaphore):
     def __init__(self, value=1):
         self.max_value = value
         super(Tokens, self).__init__(value)

@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
+=======
+#!/usr/bin/env python
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
 
 #thanks thegrugq!
 
 # seriously, fuck python 2.5
+<<<<<<< HEAD
 
+=======
+from __future__ import with_statement
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
 
 import gevent
 import gevent.backdoor
@@ -14,15 +22,24 @@ import gevent.queue
 import mechanize
 import logging
 import resource
+<<<<<<< HEAD
 import urllib.parse
 import urllib.request, urllib.error, urllib.parse
+=======
+import urlparse
+import urllib2
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
 import optparse
 import fileinput
 import os
 import sys
 import hashlib
 
+<<<<<<< HEAD
 useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.99 Safari/537.36"
+=======
+useragent = "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101"
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
 
 gevent.monkey.patch_all()
 
@@ -94,14 +111,22 @@ class Fetchers(object):
         self.fetchers = gevent.pool.Pool(size = count)
         self.network_tokens = Tokens(count)
 
+<<<<<<< HEAD
         for i in range(count):
+=======
+        for i in xrange(count):
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
             self.fetchers.spawn(self.fetcher_proc)
 
     def set_size(self, count):
         self.network_tokens.resize(count)
 
         if count > self.count:
+<<<<<<< HEAD
             for i in range(count-self.count):
+=======
+            for i in xrange(count-self.count):
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
                 self.fetchers.spawn(self.fetcher_proc)
 
         self.count = count
@@ -110,19 +135,31 @@ class Fetchers(object):
         try:
             with gevent.Timeout(self.page_timeout, TimeoutError):
                 return br.open(url)
+<<<<<<< HEAD
         except urllib.error.HTTPError as err:
+=======
+        except urllib2.HTTPError, err:
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
             if err.getcode() in (404, 403):
                 log.debug("Got %d for %s", err.getcode(), url)
             else:
                 log.error("Weird error %d for %s", err.getcode(), url)
             raise
+<<<<<<< HEAD
         except urllib.error.URLError as err:
+=======
+        except urllib2.URLError, err:
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
             log.error("URLError: %r for %s", err, url)
             raise
         except TimeoutError:
             log.debug("Timeout fetching page: %s", url)
             raise
+<<<<<<< HEAD
         except Exception as e:
+=======
+        except Exception, e:
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
             log.error("Unknown error %r for %s", e, url)
             raise
 
@@ -152,7 +189,11 @@ class Fetchers(object):
                 self.fetched.add(url.upper())
                 self.pageq.put((url, resp))
 
+<<<<<<< HEAD
             except Exception as err:
+=======
+            except Exception, err:
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
                 tries -= 1
                 if tries >= 0:
                     self.urlq.put((url, tries))
@@ -187,7 +228,11 @@ class Processors(object):
         self.report = False
         self.outfp = None
 
+<<<<<<< HEAD
         for i in range(count):
+=======
+        for i in xrange(count):
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
             self.pool.spawn(self._process_worker)
 
     def _process_worker(self):
@@ -197,7 +242,11 @@ class Processors(object):
             try:
                 self._process(url, response)
                 log.info("process success %s", url)
+<<<<<<< HEAD
             except Exception as e:
+=======
+            except Exception, e:
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
                 log.error("process fail %s : %r", url, e)
             finally:
                 self.queue.task_done()
@@ -206,15 +255,23 @@ class Processors(object):
         self.queue.put((url, response))
         gevent.sleep(0)
 
+<<<<<<< HEAD
     def put(self, xxx_todo_changeme):
         (url, response) = xxx_todo_changeme
+=======
+    def put(self, (url, response)):
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
         return self.process(url, response)
 
     def qsize(self):
         return self.queue.qsize()
 
     def get_output_fname(self, url, resp, data):
+<<<<<<< HEAD
         path = urllib.parse.urlparse(resp.geturl()).path
+=======
+        path = urlparse.urlparse(resp.geturl()).path
+>>>>>>> 1c29c33f181f9efa3a8a9dab3a9a9b3d9e1f31d5
         name = os.path.basename(path)
 
         if self.md5sum:

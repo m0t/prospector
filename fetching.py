@@ -1,28 +1,28 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #thanks thegrugq!
 
 # seriously, fuck python 2.5
-from __future__ import with_statement
+
 
 import gevent
 import gevent.backdoor
-import gevent.coros
+import gevent.lock
 import gevent.monkey
 import gevent.pool
 import gevent.queue
 import mechanize
 import logging
 import resource
-import urlparse
-import urllib2
+import urllib.parse
+import urllib.request, urllib.error, urllib.parse
 import optparse
 import fileinput
 import os
 import sys
 import hashlib
 
-useragent = "Mozilla/5.001 (windows; U; NT4.0; en-US; rv:1.0) Gecko/25250101"
+useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.99 Safari/537.36"
 
 gevent.monkey.patch_all()
 
@@ -65,7 +65,7 @@ def get_resp_len(resp):
     return l
 
 
-class Tokens(gevent.coros.Semaphore):
+class Tokens(gevent.lock.Semaphore):
     def __init__(self, value=1):
         self.max_value = value
         super(Tokens, self).__init__(value)
@@ -94,14 +94,14 @@ class Fetchers(object):
         self.fetchers = gevent.pool.Pool(size = count)
         self.network_tokens = Tokens(count)
 
-        for i in xrange(count):
+        for i in range(count):
             self.fetchers.spawn(self.fetcher_proc)
 
     def set_size(self, count):
         self.network_tokens.resize(count)
 
         if count > self.count:
-            for i in xrange(count-self.count):
+            for i in range(count-self.count):
                 self.fetchers.spawn(self.fetcher_proc)
 
         self.count = count
@@ -110,19 +110,19 @@ class Fetchers(object):
         try:
             with gevent.Timeout(self.page_timeout, TimeoutError):
                 return br.open(url)
-        except urllib2.HTTPError, err:
+        except urllib.error.HTTPError as err:
             if err.getcode() in (404, 403):
                 log.debug("Got %d for %s", err.getcode(), url)
             else:
                 log.error("Weird error %d for %s", err.getcode(), url)
             raise
-        except urllib2.URLError, err:
+        except urllib.error.URLError as err:
             log.error("URLError: %r for %s", err, url)
             raise
         except TimeoutError:
             log.debug("Timeout fetching page: %s", url)
             raise
-        except Exception, e:
+        except Exception as e:
             log.error("Unknown error %r for %s", e, url)
             raise
 
@@ -152,7 +152,7 @@ class Fetchers(object):
                 self.fetched.add(url.upper())
                 self.pageq.put((url, resp))
 
-            except Exception, err:
+            except Exception as err:
                 tries -= 1
                 if tries >= 0:
                     self.urlq.put((url, tries))
@@ -187,7 +187,7 @@ class Processors(object):
         self.report = False
         self.outfp = None
 
-        for i in xrange(count):
+        for i in range(count):
             self.pool.spawn(self._process_worker)
 
     def _process_worker(self):
@@ -197,7 +197,7 @@ class Processors(object):
             try:
                 self._process(url, response)
                 log.info("process success %s", url)
-            except Exception, e:
+            except Exception as e:
                 log.error("process fail %s : %r", url, e)
             finally:
                 self.queue.task_done()
@@ -206,14 +206,15 @@ class Processors(object):
         self.queue.put((url, response))
         gevent.sleep(0)
 
-    def put(self, (url, response)):
+    def put(self, xxx_todo_changeme):
+        (url, response) = xxx_todo_changeme
         return self.process(url, response)
 
     def qsize(self):
         return self.queue.qsize()
 
     def get_output_fname(self, url, resp, data):
-        path = urlparse.urlparse(resp.geturl()).path
+        path = urllib.parse.urlparse(resp.geturl()).path
         name = os.path.basename(path)
 
         if self.md5sum:
